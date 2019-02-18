@@ -60,7 +60,7 @@ data/
       - class_n folder/
 """
 
-data_dir = "./data"
+data_dir = "./content/drive/My Drive/Datasets/Football-Teams"
 input_shape = 299
 batch_size = 32
 mean = [0.5, 0.5, 0.5]
