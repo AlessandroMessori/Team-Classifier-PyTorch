@@ -30,7 +30,7 @@ data_transforms = {
     ]),
 }
 
-data_dir = 'data/'
+data_dir = 'drive/My Drive/Datasets/Football-Teams'
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
@@ -179,45 +179,6 @@ def visualize_model(model, num_images=6):
                     return
         model.train(mode=was_training)
 
-######################################################################
-# Finetuning the convnet
-# ----------------------
-#
-# Load a pretrained model and reset final fully connected layer.
-#
-
-model_urls['resnet18'] = model_urls['resnet18'].replace('https://', 'http://')
-num_classes = 4 
-model_ft = models.resnet18(pretrained=True)
-num_ftrs = model_ft.fc.in_features
-model_ft.fc = nn.Linear(num_ftrs, 4)
-
-model_ft = model_ft.to(device)
-
-criterion = nn.CrossEntropyLoss()
-
-# Observe that all parameters are being optimized
-optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
-
-# Decay LR by a factor of 0.1 every 7 epochs
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
-
-######################################################################
-# Train and evaluate
-# ^^^^^^^^^^^^^^^^^^
-#
-# It should take around 15-25 min on CPU. On GPU though, it takes less than a
-# minute.
-#
-
-model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=25)
-
-######################################################################
-#
-
-visualize_model(model_ft)
-
 
 ######################################################################
 # ConvNet as fixed feature extractor
@@ -231,13 +192,17 @@ visualize_model(model_ft)
 # `here <https://pytorch.org/docs/notes/autograd.html#excluding-subgraphs-from-backward>`__.
 #
 
-model_conv = torchvision.models.resnet18(pretrained=True)
+
+model_urls['resnet18'] = model_urls['resnet18'].replace('https://', 'http://')
+model_conv = models.resnet18(pretrained=True)
 for param in model_conv.parameters():
     param.requires_grad = False
 
 # Parameters of newly constructed modules have requires_grad=True by default
+
+num_classes = 4 
 num_ftrs = model_conv.fc.in_features
-model_conv.fc = nn.Linear(num_ftrs, 2)
+model_conv.fc = nn.Linear(num_ftrs, num_classes)
 
 model_conv = model_conv.to(device)
 
@@ -270,3 +235,5 @@ visualize_model(model_conv)
 
 plt.ioff()
 plt.show()
+
+torch.save(model_conv.state_dict(),"./state_dict.h5")
