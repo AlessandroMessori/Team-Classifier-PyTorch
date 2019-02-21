@@ -63,10 +63,13 @@ def image_loader(image_name):
     return image  # assumes that you're using GPU
 
 
-test_input = torch.ones([1, 3, 224, 224])
-test_image = Image.open("./test.jpeg")
-test_image = loader(test_image).float()
-test_input[0] = test_image
+test_batch = ["./test1.jpeg", "./test2.jpeg", "./test3.jpeg", "./test4.jpeg"]
+test_input = torch.ones([len(test_batch), 3, 224, 224])
+
+for i in range(0, len(test_batch)):
+    test_image = Image.open(test_batch[i])
+    test_image = loader(test_image).float()
+    test_input[i] = test_image
 
 
 outputs = model_conv(test_input)
@@ -74,5 +77,5 @@ if type(outputs) == tuple:
     outputs, _ = outputs
 _, preds = torch.Tensor.max(outputs.data, 1)
 
-result = teams[preds[0]]
-print(result)
+for pred in preds:
+    print(teams[pred])
