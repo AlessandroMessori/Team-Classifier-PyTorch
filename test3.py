@@ -7,21 +7,21 @@ from PIL import Image
 import numpy as np
 import os
 
-## Load the model 
-model_urls['resnet18'] = model_urls['resnet18'].replace('https://', 'http://')
+## Load the model
+model_urls["resnet18"] = model_urls["resnet18"].replace("https://", "http://")
 model_conv = models.resnet18(pretrained=True)
 
-#device = torch.device("cuda")
+# device = torch.device("cuda")
 
-## Lets freeze the first few layers. This is done in two stages 
-# Stage-1 Freezing all the layers 
+## Lets freeze the first few layers. This is done in two stages
+# Stage-1 Freezing all the layers
 
 for i, param in model_conv.named_parameters():
     param.requires_grad = False
 
-## Number of Classification Classes 
+## Number of Classification Classes
 n_class = 4
-teams = ["Barcellona","Bayern Munich","Juventus","Real Madrid"]
+teams = ["Barcellona", "Bayern Munich", "Juventus", "Real Madrid"]
 
 # Since imagenet as 1000 classes , We need to change our last layer according to the number of classes we have,
 num_ftrs = model_conv.fc.in_features
@@ -36,13 +36,13 @@ for name, child in model_conv.named_children():
     ct.append(name)
 
 
-'''if torch.cuda.is_available():
-    model_conv.cuda()'''
+"""if torch.cuda.is_available():
+    model_conv.cuda()"""
 
 
 # Load pretrained weights
 model_conv.load_state_dict(torch.load("./state_dict.h5"))
-#model_conv = model_conv.to(device)
+# model_conv = model_conv.to(device)
 
 
 '''imsize = 16
@@ -65,12 +65,11 @@ batch_size = 32
 mean = [0.5, 0.5, 0.5]
 std = [0.5, 0.5, 0.5]
 scale = 299
-input_shape = 299 
+input_shape = 299
 
-loader = transforms.Compose([
-        transforms.Resize(scale),
-        transforms.ToTensor(),
-        transforms.Normalize(mean, std)])
+loader = transforms.Compose(
+    [transforms.Resize(scale), transforms.ToTensor(), transforms.Normalize(mean, std)]
+)
 
 test_image = Image.open("./test.jpeg")
 test_image = loader(test_image).float()
@@ -78,7 +77,7 @@ test_input[0] = test_image
 
 outputs = model_conv(test_input)
 if type(outputs) == tuple:
-        outputs, _ = outputs
+    outputs, _ = outputs
 _, preds = torch.Tensor.max(outputs.data, 1)
 
 result = teams[preds[0]]
