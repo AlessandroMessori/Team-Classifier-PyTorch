@@ -44,36 +44,30 @@ for name, child in model_conv.named_children():
 model_conv.load_state_dict(torch.load("./state_dict.h5"))
 # model_conv = model_conv.to(device)
 
+loader = transforms.Compose(
+    [
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ]
+)
 
-'''imsize = 16
-loader = transforms.Compose([transforms.Resize(imsize), transforms.ToTensor()])
 
 def image_loader(image_name):
     """load image, returns cuda tensor"""
     image = Image.open(image_name)
     image = loader(image).float()
     image = Variable(image, requires_grad=True)
-    #image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
-    return image  #assumes that you're using GPU
+    # image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
+    return image  # assumes that you're using GPU
 
-test_input = image_loader('./test.jpeg')
-outputs = model_conv(test_input)
-result = outputs
-print(result)'''
 
-batch_size = 32
-mean = [0.5, 0.5, 0.5]
-std = [0.5, 0.5, 0.5]
-scale = 299
-input_shape = 299
-
-loader = transforms.Compose(
-    [transforms.Resize(scale), transforms.ToTensor(), transforms.Normalize(mean, std)]
-)
-
+test_input = torch.ones([1, 3, 224, 224])
 test_image = Image.open("./test.jpeg")
 test_image = loader(test_image).float()
 test_input[0] = test_image
+
 
 outputs = model_conv(test_input)
 if type(outputs) == tuple:
@@ -81,3 +75,4 @@ if type(outputs) == tuple:
 _, preds = torch.Tensor.max(outputs.data, 1)
 
 result = teams[preds[0]]
+print(result)
