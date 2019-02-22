@@ -212,7 +212,7 @@ for param in model_conv.parameters():
 
 # Parameters of newly constructed modules have requires_grad=True by default
 
-num_classes = 4
+num_classes = 6
 num_ftrs = model_conv.fc.in_features
 model_conv.fc = nn.Linear(num_ftrs, num_classes)
 

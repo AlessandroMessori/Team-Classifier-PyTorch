@@ -20,8 +20,15 @@ for i, param in model_conv.named_parameters():
     param.requires_grad = False
 
 ## Number of Classification Classes
-n_class = 4
-teams = ["Barcellona", "Bayern Munich", "Juventus", "Real Madrid"]
+n_class = 6
+teams = [
+    "Barcellona",
+    "Bayern Munich",
+    "Juventus",
+    "Manchester City",
+    "Paris Saint Germain",
+    "Real Madrid",
+]
 
 # Since imagenet as 1000 classes , We need to change our last layer according to the number of classes we have,
 num_ftrs = model_conv.fc.in_features
