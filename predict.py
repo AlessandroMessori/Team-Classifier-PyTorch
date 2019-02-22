@@ -20,11 +20,13 @@ for i, param in model_conv.named_parameters():
     param.requires_grad = False
 
 ## Number of Classification Classes
-n_class = 6
+n_class = 8
 teams = [
+    "Atletico Madrid",
     "Barcellona",
     "Bayern Munich",
     "Juventus",
+    "Liverpool",
     "Manchester City",
     "Paris Saint Germain",
     "Real Madrid",
